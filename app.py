@@ -17,7 +17,7 @@ CORS(app)
 from bs4 import BeautifulSoup
 
 # Prefix for site content
-prefix = 'jstor-labs/juncture-webapp'
+prefix = 'kent-map/kent'
 default_ref = None
 
 def _add_tag(soup, tag, attrs):
