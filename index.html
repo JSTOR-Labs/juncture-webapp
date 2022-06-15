@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css" rel="stylesheet"/>
+  <title>Document</title>
+  <style>
+    [data-target] {color:blue; cursor:pointer;}
+  </style>
+</head>
+  <div id="app" ref="app" v-html="html"></div>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/shoelace.js" type="module"></script>
+  <script src="https://unpkg.com/visual-essays/dist/visual-essays/visual-essays.esm.js" type="module"></script>
+  <!-- This is used for deep linking of Single Page Apps when hosted with GitHub Pages -->
+  <script type="text/javascript">
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        let decoded = l.search.slice(1).split('&').map(s => s.replace(/~and~/g, '&')).join('?')
+        window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash)
+      }
+    }(window.location))
+  </script>
+  <script type="module">
+    new Vue({
+      el: '#app',
+      data: () => ({
+        prefix: 'rdsnyder/demo',
+        html: null,
+      }),
+      computed: {},
+      created() {},
+      mounted() {
+        this.loadPage('/')
+      },
+      methods: {
+        loadPage(path) {
+          console.log('loadPage', path)
+          fetch(`https://api.juncture-digital.org/html/${this.prefix}${path}`).then(resp => resp.text())
+        .then(html => {
+          this.html = (new DOMParser().parseFromString(html, 'text/html').children[0].children[1].children[0]).outerHTML
+          this.$nextTick(() => this.convertLinks(this.$refs.app))
+        })
+
+        },
+        convertLinks(root) {
+          root.querySelectorAll('a').forEach(a => {
+            let link = new URL(a.href)
+            if (link.origin === location.origin) {
+              let pathElems = link.pathname.split('/').filter(elem => elem)
+              let target = pathElems.length ? `/${pathElems.join('/')}/` : '/'
+              a.removeAttribute('href')
+              a.setAttribute('data-target', target)
+              a.addEventListener('click', (e) => this.loadPage(e.target.dataset.target))
+            }
+          })
+        }
+      },
+      watch: {}
+    })
+    Vue.config.productionTip = false
+    Vue.config.devtools = true
+  </script>
+</body>
+</html>
