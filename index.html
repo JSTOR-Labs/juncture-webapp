@@ -33,8 +33,9 @@
       }),
       computed: {},
       created() {},
-      mounted() {
+      mounted() { 
         console.log(location)
+        window.onpopstate = (e) => this.loadPage(e.state.file, true) 
         this.loadPage('/')
       },
       methods: {
@@ -44,14 +45,18 @@
         .then(html => {
           this.html = (new DOMParser().parseFromString(html, 'text/html').children[0].children[1].children[0]).outerHTML
           this.$nextTick(() => this.convertLinks(this.$refs.app))
+          let browserPath = `${location.origin}${path}`
+          console.log(`browserPath=${browserPath}`)
+          history.pushState({file: path || ''}, '', browserPath)
         })
 
         },
         convertLinks(root) {
           root.querySelectorAll('a').forEach(a => {
+            console.log(a.href)
             let link = new URL(a.href)
             if (link.origin === location.origin) {
-              let pathElems = link.pathname.split('/').filter(elem => elem).slice(1)
+              let pathElems = link.pathname.split('/').filter(elem => elem).slice(location.hostname === 'github.io' ? 1 : 0)
               let target = pathElems.length ? `/${pathElems.join('/')}/` : '/'
               a.removeAttribute('href')
               a.setAttribute('data-target', target)
