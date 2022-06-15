@@ -51,7 +51,7 @@
           root.querySelectorAll('a').forEach(a => {
             let link = new URL(a.href)
             if (link.origin === location.origin) {
-              let pathElems = link.pathname.split('/').filter(elem => elem)
+              let pathElems = link.pathname.split('/').filter(elem => elem).slice(1)
               let target = pathElems.length ? `/${pathElems.join('/')}/` : '/'
               a.removeAttribute('href')
               a.setAttribute('data-target', target)
