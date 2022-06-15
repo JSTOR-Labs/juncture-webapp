@@ -45,7 +45,7 @@
         .then(html => {
           this.html = (new DOMParser().parseFromString(html, 'text/html').children[0].children[1].children[0]).outerHTML
           this.$nextTick(() => this.convertLinks(this.$refs.app))
-          let browserPath = `${location.origin}${location.hostname === 'github.io' ? '/'+location.pathname.split('/')[1] : ''}${path}`
+          let browserPath = `${location.origin}${location.hostname.indexOf('github.io') > 0 ? '/'+location.pathname.split('/')[1] : ''}${path}`
           console.log(`browserPath=${browserPath}`)
           history.pushState({file: path || ''}, '', browserPath)
         })
