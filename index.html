@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <base href="/kent-map/kent/" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css" rel="stylesheet"/>
   <title>Document</title>
@@ -41,6 +42,8 @@
     }(window.location))
   </script>
   <script type="module">
+    const API_ENDPOINT = location.hostname === 'localhost' ? 'http://localhost:8000/html' : 'https://api.visual-essays.net/html'
+    
     new Vue({
       el: '#app',
       data: () => ({
@@ -67,9 +70,9 @@
         loadPage() {
           let path = this.path.split('/').filter(elem => elem).join('/')
           let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
-          let url = `https://api.juncture-digital.org/html/${path}${path === '' ? '' : '/'}`
-          if (prefix) url += `?prefix=${prefix}`
-          if (this.ref) url += `${prefix ? '&' : '?'}ref=${this.ref}`
+          let base = `/${[this.acct, this.repo, this.path].filter(elem => elem).join('/')}/`
+          let url = `${API_ENDPOINT}/${prefix}/${path}${path === '' ? '' : '/'}?base=${base}&prefix=${prefix}`
+          if (this.ref) url += `&ref=${this.ref}`
           console.log('loadPage', url)
           fetch(url).then(resp => resp.text())
           .then(html => {

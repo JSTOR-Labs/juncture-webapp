@@ -48,7 +48,8 @@ def _customize_response(html):
   return str(soup)
 
 def _get_html(path, base_url, ref=default_ref, **kwargs):
-  api_url = f'https://api.juncture-digital.org/html{path}?prefix={prefix}&base={base_url}'
+  api_endpoint = 'http://localhost:8000/html' if request.host.startswith('localhost') else 'https://api.visual-essays.net/html'
+  api_url = f'{api_endpoint}{path}?prefix={prefix}&base={base_url}'
   if ref: api_url += f'&ref={ref}'
   resp = requests.get(api_url)
   return resp.status_code, resp.text if resp.status_code == 200 else ''
