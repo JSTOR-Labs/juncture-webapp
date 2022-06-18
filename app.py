@@ -17,8 +17,8 @@ CORS(app)
 from bs4 import BeautifulSoup
 
 # Prefix for site content
-prefix = 'kent-map/kent'
-default_ref = None
+prefix = ''
+default_ref = ''
 
 def _add_tag(soup, tag, attrs):
   el = soup.new_tag(tag)

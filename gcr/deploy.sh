@@ -2,7 +2,7 @@
 
 CONFIG='juncture'
 GCP_PROJECT='juncture-digital'
-GCR_SERVICE=${1:-juncture}
+GCR_SERVICE=${1:-juncture-webapp}
 REGION='us-central1'
 
 MIN_INSTANCE_LIMIT=1
