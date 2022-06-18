@@ -37,9 +37,9 @@
     new Vue({
       el: '#app',
       data: () => ({
-        acct: 'rdsnyder',
-        repo: 'kent',
-        ref: 'test',
+        acct: '',
+        repo: '',
+        ref: '',
         isGhp: false,
         html: null
       }),
@@ -71,14 +71,16 @@
       methods: {
         loadPage() {
           let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
-          let base = `/${document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0).join('/')}/`
+          let basePathElems = document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0)
+          let base = basePathElems.length > 0 ? `/${basePathElems.join('/')}/` : '/'
           let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${base}&prefix=${prefix}&inline=true`
           if (this.ref) url += `&ref=${this.ref}`
           console.log(`loadPage: url=${url}`)
           fetch(url).then(resp => resp.text())
           .then(html => {
             let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
-            this.html = body.children[0].innerHTML
+            console.log('selected', body.querySelector(':scope > #app') || body)
+            this.html = (body.querySelector(':scope > #app') || body).innerHTML
             this.loadDependencies(head.querySelectorAll('link[rel="stylesheet"]'), 0, () => this.loadDependencies(head.querySelectorAll('style'), 0))
             this.loadDependencies(body.querySelectorAll('script'), 0, () => console.log('set visible'))
           })
