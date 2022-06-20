@@ -16,9 +16,9 @@ CORS(app)
 
 from bs4 import BeautifulSoup
 
-# Prefix for site content
-prefix = ''
-default_ref = ''
+# Site content
+PREFIX = 'jstor-labs/juncture-webapp'
+REF = '' # Github branch to use - leave empty for default branch (typically 'main')
 
 def _add_tag(soup, tag, attrs):
   el = soup.new_tag(tag)
@@ -47,9 +47,9 @@ def _customize_response(html):
 
   return str(soup)
 
-def _get_html(path, base_url, ref=default_ref, **kwargs):
+def _get_html(path, base_url, ref=REF, **kwargs):
   api_endpoint = 'http://localhost:8000/html' if request.host.startswith('localhost') else 'https://api.visual-essays.net/html'
-  api_url = f'{api_endpoint}{path}?prefix={prefix}&base={base_url}'
+  api_url = f'{api_endpoint}{path}?prefix={PREFIX}&base={base_url}'
   if ref: api_url += f'&ref={ref}'
   resp = requests.get(api_url)
   return resp.status_code, resp.text if resp.status_code == 200 else ''

@@ -1,11 +1,22 @@
 # Juncture
 
-Juncture is a web service that renders interactive visual essays from plain text files.  As a hosted service Juncture can be used directly or as a back-end service to a self-managed web application.  This document provides an overview of the 
+Juncture is a web service that renders interactive visual essays from plain text files.  
+
+## Quick start
+
+
+## Content hosting
+
+### Juncture-hosted content
+
+### Hosting content in GitHub
+
+# Juncture site hosting
+
+As a hosted service Juncture can be used directly or as a back-end service to a self-managed web application.  This document provides an overview of the 
 
 1. Juncture-managed content and hosting
 2. Self-managed content and hosting
-
-[GitHub Repository setup](github-setup)
 
 ## Juncture as a hosted service
 
@@ -34,9 +45,6 @@ This section describes 2 options for static hosting of Juncture site.  Many othe
 #### GitHub Pages
 
 In addition to its use as a site for managing visual essay source text files, GitHub also provides a static site hosting service.  This service is free to use and is easy to configure with a custom domain.
-
-- [GitHub Pages setup](github-pages-setup)
-- [GitHub Pages setup](./github-pages-setup)
 
 #### Netlify
 

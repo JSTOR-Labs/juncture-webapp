@@ -1,21 +1,19 @@
 #!/bin/bash
 
-CONFIG='juncture'
-GCP_PROJECT='juncture-digital'
-GCR_SERVICE=${1:-juncture-webapp}
-REGION='us-central1'
+GCR_SERVICE=${1:-myapp}
+MIN_INSTANCE_LIMIT=${2:-0}
+GCP_PROJECT=`gcloud config get-value project`
 
-MIN_INSTANCE_LIMIT=1
+echo GCP_PROJECT=${GCP_PROJECT} GCR_SERVICE=${GCR_SERVICE} MIN_INSTANCE_LIMIT=${MIN_INSTANCE_LIMIT}
 
-gcloud config configurations activate ${CONFIG}
-gcloud config set project ${GCP_PROJECT}
-gcloud config set compute/region ${REGION}
-gcloud config set run/region ${REGION}
-
+cd $(dirname "$0")
 rsync -va ../app.py .
 rsync -va ../static .
+
 gcloud builds submit --tag gcr.io/${GCP_PROJECT}/${GCR_SERVICE}
+
 rm -rf app.py static
+
 gcloud beta run deploy ${GCR_SERVICE} \
     --image gcr.io/${GCP_PROJECT}/${GCR_SERVICE} \
     --min-instances ${MIN_INSTANCE_LIMIT} \

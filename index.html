@@ -7,21 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juncture</title>
   <style>
-    .visible {
-      visibility: visible;
-      opacity: 1;
-      transition: opacity .5s linear;
-    }
-    .hidden {
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 0s .5s, opacity .5s linear;
-    }
+    .visible { visibility: visible; opacity: 1; transition: opacity .5s linear; }
+    .hidden { visibility: hidden; opacity: 0; transition: visibility 0s .5s, opacity .5s linear; }
   </style>
 </head>
 <body class="hidden">
+  
   <div id="app" ref="app" v-html="html"></div>
+  
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  
   <!-- This is used for deep linking of Single Page Apps when hosted with GitHub Pages -->
   <script type="text/javascript">
     (function(l) {
@@ -31,51 +26,52 @@
       }
     }(window.location))
   </script>
+
   <script type="module">
-    const API_ENDPOINT = location.hostname === 'localhost' ? 'http://localhost:8000/html' : 'https://api.visual-essays.net/html'
     
     new Vue({
       el: '#app',
       data: () => ({
-        acct: '',
-        repo: '',
+        acct: 'jstor-labs',
+        repo: 'juncture-webapp',
         ref: '',
-        isGhp: false,
         html: null
       }),
+      computed: {
+        isGHP() { return location.host.indexOf('github.io') > 0 },
+        pathElems() { return location.pathname.split('/').filter(elem => elem) },
+        path() { return this.pathElems.slice(this.isGhp ? 1 : 0).join('/') },
+        prefix() { return [this.acct, this.repo].filter(elem => elem).join('/') },
+        base() { return this.pathElems.length > 0 ? `/${this.pathElems.join('/')}/` : '/' },
+        baseQarg() {
+          let basePathElems = this.base.split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0)
+          return basePathElems.length > 0 ? `/${basePathElems.join('/')}/` : '/'
+        }
+      },
       created() {
-        this.isGhp = location.host.indexOf('github.io') > 0
-        let pathElems = location.pathname.split('/').filter(elem => elem)
-        this.acct = this.acct || (this.isGhp ? location.host.split('.')[0] : pathElems.length > 0 ? pathElems[0] : '')
-        this.repo = this.repo || (this.isGhp ? pathElems.length > 0 ? pathElems[0] : '' : pathElems.length > 1 ? pathElems[1] : '')
-        this.path = pathElems.slice(this.isGhp ? 1 : 0).join('/')
-        let base = pathElems.length > 0 ? `/${pathElems.join('/')}/` : '/'
-        document.head.querySelector('base').href = base
-        console.log(`acct=${this.acct} repo=${this.repo} path=${this.path} base=${base} ref=${this.ref} isGhp=${this.isGhp}`)
+        this.acct = this.acct || (this.isGhp ? location.host.split('.')[0] : this.pathElems.length > 0 ? this.pathElems[0] : '')
+        this.repo = this.repo || (this.isGhp ? this.pathElems.length > 0 ? this.pathElems[0] : '' : this.pathElems.length > 1 ? this.pathElems[1] : '')
+        document.head.querySelector('base').href = this.base
+        // console.log(`acct=${this.acct} repo=${this.repo} ref=${this.ref} path=${this.path} prefix=${this.prefix} base=${this.base} isGhp=${this.isGhp}`)
       },
-      mounted() {
-        this.loadPage()
-      },
+      mounted() { this.loadPage() },
       methods: {
+
         loadPage() {
-          let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
-          let basePathElems = document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0)
-          let base = basePathElems.length > 0 ? `/${basePathElems.join('/')}/` : '/'
-          let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${base}&prefix=${prefix}&inline=true`
+          let url = `https://api.visual-essays.net/html/${this.prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${this.baseQarg}&prefix=${this.prefix}&inline=true`
           if (this.ref) url += `&ref=${this.ref}`
-          // console.log(`loadPage: url=${url}`)
           fetch(url).then(resp => resp.text())
           .then(html => {
             let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
             this.html = (body.querySelector(':scope > #app') || body).innerHTML
+            // Loads stylesheets and scripts used by loaded page
             this.loadDependencies(head.querySelectorAll('link[rel="stylesheet"]'), 0, () => this.loadDependencies(head.querySelectorAll('style'), 0))
-            this.loadDependencies(body.querySelectorAll('script'), 0, () => console.log('set visible'))
+            this.loadDependencies(body.querySelectorAll('script'), 0)
           })
         },
         
         loadDependencies(dependencies, i, callback) {
           if (dependencies.length > 0) {
-            // console.log(`loadDependencies ${i+1} of ${dependencies.length} ${dependencies[0].localName}`)
             this.load(dependencies.item(i), () => {
               if (i < dependencies.length-1) this.loadDependencies(dependencies, i+1, callback) 
               else if (callback) callback()
@@ -113,8 +109,6 @@
         }
       }
     })
-    Vue.config.productionTip = false
-    Vue.config.devtools = true
 
   </script>
 </body>
