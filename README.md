@@ -23,10 +23,10 @@ As a hosted service Juncture can be used directly or as a back-end service to a 
 
 The simplest way to use Juncture is as a hosted service.  When using Juncture in this way visual essays and Juncture sites are served from the `juncture.digital.org` domain.  When using Juncture as a hosted service the visual essay source files may be managed by Juncture or self-hosted using a Github repository.
 
-- Pros:
+Pros:
   - No Cost
   - No setup and administration
-- Cons:
+Cons:
   - Non-custom domain
 
 ## Using a custom domain
