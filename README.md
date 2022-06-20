@@ -35,7 +35,7 @@ This section describes 2 options for static hosting of Juncture site.  Many othe
 
 In addition to its use as a site for managing visual essay source text files, GitHub also provides a static site hosting service.  This service is free to use and is easy to configure with a custom domain.
 
-[GitHub Pages setup](github-pages-setup)
+[GitHub Pages setup](./github-pages-setup)
 
 #### Netlify
 
