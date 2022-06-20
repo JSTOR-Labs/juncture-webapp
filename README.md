@@ -70,6 +70,6 @@ In addition to its use as a site for managing visual essay source text files, Gi
 
 [Google Cloud Run setup](gcr-setup)
 
-#### Amazon Web Services (AWS)
+#### Amazon Web Services (AWS) {.aws}
 
 [Amazon Web Services setup](aws-setup)
