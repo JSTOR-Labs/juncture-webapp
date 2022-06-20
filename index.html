@@ -52,7 +52,7 @@
         this.acct = this.acct || (this.isGhp ? location.host.split('.')[0] : this.pathElems.length > 0 ? this.pathElems[0] : '')
         this.repo = this.repo || (this.isGhp ? this.pathElems.length > 0 ? this.pathElems[0] : '' : this.pathElems.length > 1 ? this.pathElems[1] : '')
         document.head.querySelector('base').href = this.base
-        // console.log(`acct=${this.acct} repo=${this.repo} ref=${this.ref} path=${this.path} prefix=${this.prefix} base=${this.base} isGhp=${this.isGhp}`)
+        console.log(`acct=${this.acct} repo=${this.repo} ref=${this.ref} path=${this.path} prefix=${this.prefix} base=${this.base} isGhp=${this.isGhp}`)
       },
       mounted() { this.loadPage() },
       methods: {
@@ -60,6 +60,7 @@
         loadPage() {
           let url = `https://api.visual-essays.net/html/${this.prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${this.baseQarg}&prefix=${this.prefix}&inline=true`
           if (this.ref) url += `&ref=${this.ref}`
+          console.log(url)
           fetch(url).then(resp => resp.text())
           .then(html => {
             let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
