@@ -8,7 +8,7 @@ echo GCP_PROJECT=${GCP_PROJECT} GCR_SERVICE=${GCR_SERVICE} MIN_INSTANCE_LIMIT=${
 
 cd $(dirname "$0")
 rsync -va ../app.py .
-rsync -va ../static .
+# rsync -va ../static .
 
 gcloud builds submit --tag gcr.io/${GCP_PROJECT}/${GCR_SERVICE}
 

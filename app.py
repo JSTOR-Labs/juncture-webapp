@@ -5,7 +5,7 @@ Dependencies: bs4 Flask Flask-Cors html5lib requests
 
 import os, logging
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, Response, send_from_directory
 from flask_cors import CORS
 
 import requests
@@ -48,24 +48,28 @@ def _customize_response(html):
   return str(soup)
 
 def _get_html(path, base_url, ref=REF, **kwargs):
-  api_endpoint = 'http://localhost:8000/html' if request.host.startswith('localhost') else 'https://api.visual-essays.net/html'
-  api_url = f'{api_endpoint}{path}?prefix={PREFIX}&base={base_url}'
+  api_url = f'https://api.visual-essays.net/html{path}?prefix={PREFIX}&base={base_url}'
   if ref: api_url += f'&ref={ref}'
   resp = requests.get(api_url)
   return resp.status_code, resp.text if resp.status_code == 200 else ''
 
 @app.route('/favicon.ico')
 def favicon():
-  # return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
-  return send_from_directory(os.path.join(app.root_path, 'static', 'images'), 'favicon.png', mimetype='image/png')
+  # return send_from_directory(os.path.join(app.root_path, 'static', 'images'), 'favicon.png', mimetype='image/png')
+  resp = requests.get(f'https://raw.githubusercontent.com/{PREFIX}/{REF}/images/favicon.png').content
+  return Response(resp.content if resp.status_code == 200 else '', resp.status_code, content_type='image/png')
 
 @app.route('/robots.txt')
 def robots_txt():
-  return send_from_directory(os.path.join(app.root_path, 'static'), 'robots.txt', mimetype='text/plain')
+  # return send_from_directory(os.path.join(app.root_path, 'static'), 'sitemap.txt', mimetype='text/plain')
+  resp = requests.get(f'https://raw.githubusercontent.com/{PREFIX}/{REF}/robots.txt')
+  return Response(resp.text if resp.status_code == 200 else '', resp.status_code, content_type='text/plain')
 
 @app.route('/sitemap.txt')
 def sitemap_txt():
-  return send_from_directory(os.path.join(app.root_path, 'static'), 'sitemap.txt', mimetype='text/plain')
+  # return send_from_directory(os.path.join(app.root_path, 'static'), 'sitemap.txt', mimetype='text/plain')
+  resp = requests.get(f'https://raw.githubusercontent.com/{PREFIX}/{REF}/sitemap.txt')
+  return Response(resp.text if resp.status_code == 200 else '', resp.status_code, content_type='text/plain')
 
 @app.route('/<path:path>')
 @app.route('/')
